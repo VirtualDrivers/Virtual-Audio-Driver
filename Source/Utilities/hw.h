@@ -21,6 +21,7 @@ Abstract:
 //=============================================================================
 // BUGBUG we should dynamically allocate this...
 #define MAX_TOPOLOGY_NODES      20
+#define MAX_EQUALIZER_BANDS     10    // 10-band equalizer
 
 //=============================================================================
 // Classes
@@ -49,6 +50,14 @@ protected:
     LONG                        m_ChorusControls[MAX_TOPOLOGY_NODES];     // Chorus level
     // Acoustic Echo Cancellation
     BOOL                        m_AecEnabled[MAX_TOPOLOGY_NODES];         // AEC enable/disable
+    // Equalizer (multi-band)
+    LONG                        m_EqualizerBands[MAX_TOPOLOGY_NODES][MAX_EQUALIZER_BANDS];  // EQ band levels per node
+    // Noise Suppression
+    BOOL                        m_NoiseSuppressionEnabled[MAX_TOPOLOGY_NODES];  // Noise suppression enable/disable
+    LONG                        m_NoiseSuppressionLevel[MAX_TOPOLOGY_NODES];     // Noise suppression strength
+    // Automatic Gain Control
+    BOOL                        m_AgcEnabled[MAX_TOPOLOGY_NODES];          // AGC enable/disable
+    LONG                        m_AgcLevel[MAX_TOPOLOGY_NODES];            // AGC target level
 
 private:
 
@@ -162,6 +171,59 @@ public:
     (
         _In_  ULONG               ulNode,
         _In_  BOOL                fEnabled
+    );
+
+    // Equalizer (multi-band)
+    LONG                        GetEqualizerBand
+    (
+        _In_  ULONG               ulNode,
+        _In_  ULONG               ulBand
+    );
+    void                        SetEqualizerBand
+    (
+        _In_  ULONG               ulNode,
+        _In_  ULONG               ulBand,
+        _In_  LONG                lLevel
+    );
+
+    // Noise Suppression
+    BOOL                        GetNoiseSuppressionEnabled
+    (
+        _In_  ULONG               ulNode
+    );
+    void                        SetNoiseSuppressionEnabled
+    (
+        _In_  ULONG               ulNode,
+        _In_  BOOL                fEnabled
+    );
+    LONG                        GetNoiseSuppressionLevel
+    (
+        _In_  ULONG               ulNode
+    );
+    void                        SetNoiseSuppressionLevel
+    (
+        _In_  ULONG               ulNode,
+        _In_  LONG                lLevel
+    );
+
+    // Automatic Gain Control
+    BOOL                        GetAgcEnabled
+    (
+        _In_  ULONG               ulNode
+    );
+    void                        SetAgcEnabled
+    (
+        _In_  ULONG               ulNode,
+        _In_  BOOL                fEnabled
+    );
+    LONG                        GetAgcLevel
+    (
+        _In_  ULONG               ulNode
+    );
+    void                        SetAgcLevel
+    (
+        _In_  ULONG               ulNode,
+        _In_  LONG                lLevel
     );
 
 protected:

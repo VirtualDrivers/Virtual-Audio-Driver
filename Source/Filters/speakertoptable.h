@@ -208,6 +208,54 @@ PCPROPERTY_ITEM SpeakerPropertiesAec[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerAec, SpeakerPropertiesAec);
 
 //=============================================================================
+// Equalizer (multi-band)
+//=============================================================================
+static
+PCPROPERTY_ITEM SpeakerPropertiesEqualizer[] =
+{
+    {
+        &KSPROPSETID_Audio,
+        KSPROPERTY_AUDIO_DEV_SPECIFIC,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_SpeakerTopology
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerEqualizer, SpeakerPropertiesEqualizer);
+
+//=============================================================================
+// Noise Suppression
+//=============================================================================
+static
+PCPROPERTY_ITEM SpeakerPropertiesNoiseSuppress[] =
+{
+    {
+        &KSPROPSETID_Audio,
+        KSPROPERTY_AUDIO_DEV_SPECIFIC,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_SpeakerTopology
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerNoiseSuppress, SpeakerPropertiesNoiseSuppress);
+
+//=============================================================================
+// Automatic Gain Control
+//=============================================================================
+static
+PCPROPERTY_ITEM SpeakerPropertiesAgc[] =
+{
+    {
+        &KSPROPSETID_Audio,
+        KSPROPERTY_AUDIO_DEV_SPECIFIC,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_SpeakerTopology
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerAgc, SpeakerPropertiesAgc);
+
+//=============================================================================
 static
 PCNODE_DESCRIPTOR SpeakerTopologyNodes[] =
 {
@@ -253,11 +301,32 @@ PCNODE_DESCRIPTOR SpeakerTopologyNodes[] =
       &KSNODETYPE_CHORUS,             // Type
       NULL                            // Name
     },
+    // KSNODE_TOPO_EQUALIZER
+    {
+      0,                              // Flags
+      &AutomationSpeakerEqualizer,   // AutomationTable
+      &KSNODETYPE_EQUALIZER,          // Type
+      NULL                            // Name
+    },
     // KSNODE_TOPO_AEC
     {
       0,                              // Flags
       &AutomationSpeakerAec,        // AutomationTable
       &KSNODETYPE_ACOUSTIC_ECHO_CANCEL, // Type
+      NULL                            // Name
+    },
+    // KSNODE_TOPO_NOISE_SUPPRESS
+    {
+      0,                              // Flags
+      &AutomationSpeakerNoiseSuppress, // AutomationTable
+      &KSNODETYPE_NOISE_SUPPRESS,     // Type
+      NULL                            // Name
+    },
+    // KSNODE_TOPO_AGC
+    {
+      0,                              // Flags
+      &AutomationSpeakerAgc,         // AutomationTable
+      &KSNODETYPE_AGC,                // Type
       NULL                            // Name
     }
 };
@@ -266,9 +335,12 @@ C_ASSERT(KSNODE_TOPO_SPEAKER_VOLUME == 0);
 C_ASSERT(KSNODE_TOPO_SPEAKER_MUTE == 1);
 C_ASSERT(KSNODE_TOPO_BASS == 2);
 C_ASSERT(KSNODE_TOPO_TREBLE == 3);
-C_ASSERT(KSNODE_TOPO_REVERB == 4);
-C_ASSERT(KSNODE_TOPO_CHORUS == 5);
-C_ASSERT(KSNODE_TOPO_AEC == 6);
+C_ASSERT(KSNODE_TOPO_EQUALIZER == 4);
+C_ASSERT(KSNODE_TOPO_REVERB == 5);
+C_ASSERT(KSNODE_TOPO_CHORUS == 6);
+C_ASSERT(KSNODE_TOPO_AEC == 7);
+C_ASSERT(KSNODE_TOPO_NOISE_SUPPRESS == 8);
+C_ASSERT(KSNODE_TOPO_AGC == 9);
 
 static
 PCCONNECTION_DESCRIPTOR SpeakerTopoMiniportConnections[] =
@@ -277,7 +349,8 @@ PCCONNECTION_DESCRIPTOR SpeakerTopoMiniportConnections[] =
     {   PCFILTER_NODE,            KSPIN_TOPO_WAVEOUT_SOURCE,    KSNODE_TOPO_SPEAKER_VOLUME,     1 },
     {   KSNODE_TOPO_SPEAKER_VOLUME,       0,                          KSNODE_TOPO_BASS,       1 },
     {   KSNODE_TOPO_BASS,         0,                          KSNODE_TOPO_TREBLE,     1 },
-    {   KSNODE_TOPO_TREBLE,       0,                          KSNODE_TOPO_REVERB,     1 },
+    {   KSNODE_TOPO_TREBLE,       0,                          KSNODE_TOPO_EQUALIZER,     1 },
+    {   KSNODE_TOPO_EQUALIZER,       0,                          KSNODE_TOPO_REVERB,     1 },
     {   KSNODE_TOPO_REVERB,       0,                          KSNODE_TOPO_CHORUS,     1 },
     {   KSNODE_TOPO_CHORUS,       0,                          KSNODE_TOPO_SPEAKER_MUTE,       1 },
     {   KSNODE_TOPO_SPEAKER_MUTE,         0,                          PCFILTER_NODE,          KSPIN_TOPO_LINEOUT_DEST }

@@ -12,6 +12,7 @@ Abstract:
 --*/
 
 #include "definitions.h"
+#include "hw.h"
 
 //4127: conditional expression is constant
 #pragma warning (disable : 4127)
@@ -727,13 +728,13 @@ Return Value:
                         PropertyRequest->Node, 
                         ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                     );
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
                 if (ALL_CHANNELS_ID == ulChannel)
                 {
-                    for (ULONG i=0; i<ulChannel; ++i)
+                    for (ULONG i=0; i<MaxChannels; ++i)
                     {
                         AdapterCommon->MixerVolumeWrite
                         (
@@ -817,7 +818,7 @@ PropertyHandler_Bass
                         PropertyRequest->Node, 
                         ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                     );
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
@@ -903,7 +904,7 @@ PropertyHandler_Treble
                         PropertyRequest->Node, 
                         ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                     );
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
@@ -992,7 +993,7 @@ PropertyHandler_Reverb
                         PropertyRequest->Node, 
                         ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                     );
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
@@ -1078,7 +1079,7 @@ PropertyHandler_Chorus
                         PropertyRequest->Node, 
                         ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                     );
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
             else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
             {
@@ -1181,6 +1182,291 @@ PropertyHandler_AcousticEchoCancel
 
     return ntStatus;
 } // PropertyHandler_AcousticEchoCancel
+
+//=============================================================================
+// Equalizer (multi-band)
+//=============================================================================
+NTSTATUS                            
+PropertyHandler_Equalizer
+(
+    _In_  PADAPTERCOMMON        AdapterCommon,
+    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
+    _In_  ULONG                 MaxChannels
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[%s]",__FUNCTION__));
+
+    NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    ULONG    ulBand;
+    PLONG    plLevel;
+
+    UNREFERENCED_PARAMETER(MaxChannels);
+
+    if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+    {
+        ntStatus = PropertyHandler_BasicSupportVolume(
+                            PropertyRequest,
+                            1);  // Equalizer band is per-band, not per-channel
+    }
+    else
+    {
+        ntStatus = 
+            ValidatePropertyParams
+            (
+                PropertyRequest, 
+                sizeof(LONG),    // EQ band level is a LONG
+                sizeof(ULONG)    // instance is the band number
+            );
+        if (NT_SUCCESS(ntStatus))
+        {
+            ulBand = * (PULONG (PropertyRequest->Instance));
+            plLevel = PLONG (PropertyRequest->Value);
+
+            if (ulBand >= MAX_EQUALIZER_BANDS)
+            {
+               ntStatus = STATUS_INVALID_PARAMETER;
+            }
+            else if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+            {
+                *plLevel = 
+                    AdapterCommon->EqualizerBandRead
+                    (
+                        PropertyRequest->Node, 
+                        ulBand
+                    );
+                PropertyRequest->ValueSize = sizeof(LONG);
+            }
+            else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+            {
+                AdapterCommon->EqualizerBandWrite
+                (
+                    PropertyRequest->Node, 
+                    ulBand, 
+                    VOLUME_NORMALIZE_IN_RANGE(*plLevel)
+                );
+            }
+        }
+
+        if (!NT_SUCCESS(ntStatus))
+        {
+            DPF(D_TERSE, ("[%s - ntStatus=0x%08x]",__FUNCTION__,ntStatus));
+        }
+    }
+
+    return ntStatus;
+} // PropertyHandler_Equalizer
+
+//=============================================================================
+// Noise Suppression
+//=============================================================================
+NTSTATUS                            
+PropertyHandler_NoiseSuppression
+(
+    _In_  PADAPTERCOMMON        AdapterCommon,
+    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
+    _In_  ULONG                 MaxChannels
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[%s]",__FUNCTION__));
+
+    NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    PBOOL    pfEnabled;
+    PLONG    plLevel;
+
+    UNREFERENCED_PARAMETER(MaxChannels);
+
+    if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+    {
+        ntStatus = PropertyHandler_BasicSupportMute(
+                            PropertyRequest,
+                            1);  // Noise suppression is a single boolean/level, not per-channel
+    }
+    else
+    {
+        if (PropertyRequest->ValueSize >= sizeof(LONG))
+        {
+            // Level request (LONG)
+            ntStatus = 
+                ValidatePropertyParams
+                (
+                    PropertyRequest, 
+                    sizeof(LONG),    // Noise suppression level is a LONG
+                    0                // no instance data
+                );
+            if (NT_SUCCESS(ntStatus))
+            {
+                plLevel = PLONG (PropertyRequest->Value);
+
+                if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                {
+                    *plLevel = 
+                        AdapterCommon->NoiseSuppressionLevelRead
+                        (
+                            PropertyRequest->Node
+                        );
+                    PropertyRequest->ValueSize = sizeof(LONG);
+                }
+                else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+                {
+                    AdapterCommon->NoiseSuppressionLevelWrite
+                    (
+                        PropertyRequest->Node, 
+                        VOLUME_NORMALIZE_IN_RANGE(*plLevel)
+                    );
+                }
+            }
+        }
+        else
+        {
+            // Enable/disable request (BOOL)
+            ntStatus = 
+                ValidatePropertyParams
+                (
+                    PropertyRequest, 
+                    sizeof(BOOL),    // Noise suppression enabled is a BOOL
+                    0                // no instance data
+                );
+            if (NT_SUCCESS(ntStatus))
+            {
+                pfEnabled = PBOOL (PropertyRequest->Value);
+
+                if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                {
+                    *pfEnabled = 
+                        AdapterCommon->NoiseSuppressionEnabledRead
+                        (
+                            PropertyRequest->Node
+                        );
+                    PropertyRequest->ValueSize = sizeof(BOOL);
+                }
+                else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+                {
+                    AdapterCommon->NoiseSuppressionEnabledWrite
+                    (
+                        PropertyRequest->Node, 
+                        *pfEnabled
+                    );
+                }
+            }
+        }
+
+        if (!NT_SUCCESS(ntStatus))
+        {
+            DPF(D_TERSE, ("[%s - ntStatus=0x%08x]",__FUNCTION__,ntStatus));
+        }
+    }
+
+    return ntStatus;
+} // PropertyHandler_NoiseSuppression
+
+//=============================================================================
+// Automatic Gain Control
+//=============================================================================
+NTSTATUS                            
+PropertyHandler_Agc
+(
+    _In_  PADAPTERCOMMON        AdapterCommon,
+    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
+    _In_  ULONG                 MaxChannels
+)
+{
+    PAGED_CODE();
+
+    DPF_ENTER(("[%s]",__FUNCTION__));
+
+    NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    PBOOL    pfEnabled;
+    PLONG    plLevel;
+
+    UNREFERENCED_PARAMETER(MaxChannels);
+
+    if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+    {
+        ntStatus = PropertyHandler_BasicSupportMute(
+                            PropertyRequest,
+                            1);  // AGC is a single boolean/level, not per-channel
+    }
+    else
+    {
+        if (PropertyRequest->ValueSize >= sizeof(LONG))
+        {
+            // Level request (LONG)
+            ntStatus = 
+                ValidatePropertyParams
+                (
+                    PropertyRequest, 
+                    sizeof(LONG),    // AGC level is a LONG
+                    0                // no instance data
+                );
+            if (NT_SUCCESS(ntStatus))
+            {
+                plLevel = PLONG (PropertyRequest->Value);
+
+                if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                {
+                    *plLevel = 
+                        AdapterCommon->AgcLevelRead
+                        (
+                            PropertyRequest->Node
+                        );
+                    PropertyRequest->ValueSize = sizeof(LONG);
+                }
+                else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+                {
+                    AdapterCommon->AgcLevelWrite
+                    (
+                        PropertyRequest->Node, 
+                        VOLUME_NORMALIZE_IN_RANGE(*plLevel)
+                    );
+                }
+            }
+        }
+        else
+        {
+            // Enable/disable request (BOOL)
+            ntStatus = 
+                ValidatePropertyParams
+                (
+                    PropertyRequest, 
+                    sizeof(BOOL),    // AGC enabled is a BOOL
+                    0                // no instance data
+                );
+            if (NT_SUCCESS(ntStatus))
+            {
+                pfEnabled = PBOOL (PropertyRequest->Value);
+
+                if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                {
+                    *pfEnabled = 
+                        AdapterCommon->AgcEnabledRead
+                        (
+                            PropertyRequest->Node
+                        );
+                    PropertyRequest->ValueSize = sizeof(BOOL);
+                }
+                else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
+                {
+                    AdapterCommon->AgcEnabledWrite
+                    (
+                        PropertyRequest->Node, 
+                        *pfEnabled
+                    );
+                }
+            }
+        }
+
+        if (!NT_SUCCESS(ntStatus))
+        {
+            DPF(D_TERSE, ("[%s - ntStatus=0x%08x]",__FUNCTION__,ntStatus));
+        }
+    }
+
+    return ntStatus;
+} // PropertyHandler_Agc
 #pragma code_seg()
 
 //=============================================================================
@@ -1259,7 +1545,7 @@ Return Value:
             {
                 if (ALL_CHANNELS_ID == ulChannel)
                 {
-                    for (ULONG i=0; i<ulChannel; ++i)
+                    for (ULONG i=0; i<MaxChannels; ++i)
                     {
                         AdapterCommon->MixerMuteWrite
                         (
@@ -1362,7 +1648,7 @@ Return Value:
                             ulChannel == ALL_CHANNELS_ID ? 0 : ulChannel
                         ));
                 
-                PropertyRequest->ValueSize = sizeof(ULONG);                
+                PropertyRequest->ValueSize = sizeof(LONG);
             }
         }
 
