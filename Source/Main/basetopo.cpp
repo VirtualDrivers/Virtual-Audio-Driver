@@ -306,9 +306,7 @@ Return Value:
 
         case KSPROPERTY_AUDIO_DEV_SPECIFIC:
             // Route to appropriate handler based on node
-            // Node IDs: KSNODE_TOPO_BASS=2, KSNODE_TOPO_TREBLE=3, KSNODE_TOPO_EQUALIZER=4, 
-            //           KSNODE_TOPO_REVERB=5, KSNODE_TOPO_CHORUS=6, KSNODE_TOPO_AEC=7,
-            //           KSNODE_TOPO_NOISE_SUPPRESS=8, KSNODE_TOPO_AGC=9
+            // Node IDs: KSNODE_TOPO_BASS=2, KSNODE_TOPO_TREBLE=3, KSNODE_TOPO_REVERB=4, KSNODE_TOPO_CHORUS=5, KSNODE_TOPO_AEC=6
             if (PropertyRequest->Node == KSNODE_TOPO_BASS)
             {
                 ntStatus = PropertyHandler_Bass(
@@ -319,13 +317,6 @@ Return Value:
             else if (PropertyRequest->Node == KSNODE_TOPO_TREBLE)
             {
                 ntStatus = PropertyHandler_Treble(
-                                    m_AdapterCommon,
-                                    PropertyRequest,
-                                    m_DeviceMaxChannels);
-            }
-            else if (PropertyRequest->Node == KSNODE_TOPO_EQUALIZER)
-            {
-                ntStatus = PropertyHandler_Equalizer(
                                     m_AdapterCommon,
                                     PropertyRequest,
                                     m_DeviceMaxChannels);
@@ -347,20 +338,6 @@ Return Value:
             else if (PropertyRequest->Node == KSNODE_TOPO_AEC)
             {
                 ntStatus = PropertyHandler_AcousticEchoCancel(
-                                    m_AdapterCommon,
-                                    PropertyRequest,
-                                    m_DeviceMaxChannels);
-            }
-            else if (PropertyRequest->Node == KSNODE_TOPO_NOISE_SUPPRESS)
-            {
-                ntStatus = PropertyHandler_NoiseSuppression(
-                                    m_AdapterCommon,
-                                    PropertyRequest,
-                                    m_DeviceMaxChannels);
-            }
-            else if (PropertyRequest->Node == KSNODE_TOPO_AGC)
-            {
-                ntStatus = PropertyHandler_Agc(
                                     m_AdapterCommon,
                                     PropertyRequest,
                                     m_DeviceMaxChannels);

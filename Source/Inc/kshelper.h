@@ -129,30 +129,6 @@ PropertyHandler_AcousticEchoCancel
     _In_  ULONG                 MaxChannels
 );
 
-NTSTATUS
-PropertyHandler_Equalizer
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_NoiseSuppression
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_Agc
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
 //=============================================================================
 // Property helpers
 //=============================================================================
