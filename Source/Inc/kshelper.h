@@ -89,46 +89,6 @@ PropertyHandler_PeakMeter2
     _In_  ULONG                 MaxChannels
 );
 
-NTSTATUS
-PropertyHandler_Bass
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_Treble
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_Reverb
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_Chorus
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
-NTSTATUS
-PropertyHandler_AcousticEchoCancel
-(
-    _In_  PADAPTERCOMMON        AdapterCommon,
-    _In_  PPCPROPERTY_REQUEST   PropertyRequest,
-    _In_  ULONG                 MaxChannels
-);
-
 //=============================================================================
 // Property helpers
 //=============================================================================

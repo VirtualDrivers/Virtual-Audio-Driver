@@ -1,9 +1,5 @@
-<table>
-  <tr>
-    <td><img src="https://github.com/user-attachments/assets/ca93d971-67dc-41dd-b945-ab4f372ea72a" /></td>
-    <td>Free code signing on Windows provided by <a href="https://signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a></td>
-  </tr>
-</table>
+> [!WARNING]
+> This software is in beta and requires test signing to be enabled.
 
 > [!NOTE]
 > Software Developers/Organizations: Looking to implement Virtual speakers/mics into your app? For advanced/custom functionality like named pipes, shared memory buffers (for no-latency audio), direct integration with your existing apps, and more; Contact us for quotes on a custom build! contact@mikethetech.com
@@ -59,14 +55,21 @@ By installing these drivers, you can process or forward audio without physical h
 
 ## Installation
 
-1. **Open Device Manager**
+1. **Enable Test Signing (Optional)**  
+   If you have a test-signed driver, you may need to enable test signing mode:
+   ```powershell
+   bcdedit /set testsigning on
+   ```
+   *Note: A production-signed driver can skip this step.*
+
+2. **Open Device Manager**
    - Choose **Audio inputs and outputs**, then in the top **Action** menu, choose **Add Legacy Hardware**.
    - Choose **Install the hardware that I manually select from a list (Advanced)**
    - Choose **Sound, video and game controllers**
    - Choose "Have Disk..." and locate the **VirtualAudioDriver.inf**
    - Continue with the installation.
 
-2. **Verify Installation**  
+3. **Verify Installation**  
    - Open **Device Manager**.  
    - Check under **Sound, video and game controllers** for “Virtual Audio Driver” (speaker).  
    - Check under **Audio inputs and outputs** for “Virtual Mic Driver” (microphone).

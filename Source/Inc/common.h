@@ -350,85 +350,9 @@ DECLARE_INTERFACE_(IAdapterCommon, IUnknown)
     
     STDMETHOD_(LONG,            MixerPeakMeterRead) 
     ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel
-    ) PURE;
-
-    // Tone Control (Bass/Treble)
-    STDMETHOD_(LONG,            MixerBassRead) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel
-    ) PURE;
-
-    STDMETHOD_(VOID,            MixerBassWrite) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel,
-        _In_  LONG                Value 
-    ) PURE;
-
-    STDMETHOD_(LONG,            MixerTrebleRead) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel
-    ) PURE;
-
-    STDMETHOD_(VOID,            MixerTrebleWrite) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel,
-        _In_  LONG                Value 
-    ) PURE;
-
-    // Audio Effects
-    STDMETHOD_(LONG,            MixerReverbRead) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel
-    ) PURE;
-
-    STDMETHOD_(VOID,            MixerReverbWrite) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel,
-        _In_  LONG                Value 
-    ) PURE;
-
-    STDMETHOD_(LONG,            MixerChorusRead) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel
-    ) PURE;
-
-    STDMETHOD_(VOID,            MixerChorusWrite) 
-    ( 
-        THIS_ 
-        _In_  ULONG               Index,
-        _In_  ULONG               Channel,
-        _In_  LONG                Value 
-    ) PURE;
-
-    // Acoustic Echo Cancellation
-    STDMETHOD_(BOOL,            AecEnabledRead)
-    (
-        THIS_
-        _In_  ULONG               Index
-    ) PURE;
-
-    STDMETHOD_(VOID,            AecEnabledWrite)
-    (
         THIS_
         _In_  ULONG               Index,
-        _In_  BOOL                Value
+        _In_  ULONG               Channel
     ) PURE;
 
     STDMETHOD_(VOID,            MixerReset) 

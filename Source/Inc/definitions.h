@@ -63,12 +63,6 @@ DEFINE_GUIDSTRUCT("836BA6D1-3FF7-4411-8BCD-469553452DCE", PID_VIRTUALAUDIODRIVER
 
 // Specific node numbers
 #define DEV_SPECIFIC_VT_BOOL        9
-
-// Custom property IDs for audio effects (not standard Windows property IDs)
-// These are device-specific properties that can be accessed via KSPROPERTY_AUDIO_DEV_SPECIFIC
-#define KSPROPERTY_AUDIO_REVERB             0x00000001
-#define KSPROPERTY_AUDIO_CHORUS             0x00000002
-#define KSPROPERTY_AUDIO_ACOUSTIC_ECHO_CANCEL 0x00000003
 #define DEV_SPECIFIC_VT_I4          10
 #define DEV_SPECIFIC_VT_UI4         11
 

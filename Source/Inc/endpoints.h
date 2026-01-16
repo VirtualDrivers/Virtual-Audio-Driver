@@ -64,25 +64,7 @@ enum
 {
     KSNODE_TOPO_WAVEOUT_VOLUME = 0,
     KSNODE_TOPO_WAVEOUT_MUTE,
-    KSNODE_TOPO_WAVEOUT_PEAKMETER,
-    KSNODE_TOPO_WAVEOUT_BASS,
-    KSNODE_TOPO_WAVEOUT_TREBLE,
-    KSNODE_TOPO_WAVEOUT_REVERB,
-    KSNODE_TOPO_WAVEOUT_CHORUS
-};
-
-// Speaker topology nodes (for speakertoptable.h)
-// Note: KSNODE_TOPO_VOLUME and KSNODE_TOPO_MUTE are already defined in the capture topology enum below
-// So we use different names here to avoid conflicts
-enum
-{
-    KSNODE_TOPO_SPEAKER_VOLUME = 0,
-    KSNODE_TOPO_SPEAKER_MUTE,
-    KSNODE_TOPO_BASS,
-    KSNODE_TOPO_TREBLE,
-    KSNODE_TOPO_REVERB,
-    KSNODE_TOPO_CHORUS,
-    KSNODE_TOPO_AEC
+    KSNODE_TOPO_WAVEOUT_PEAKMETER
 };
 
 //----------------------------------------------------

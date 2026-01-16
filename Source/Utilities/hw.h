@@ -41,14 +41,6 @@ protected:
     BOOL                        m_bDevSpecific;
     INT                         m_iDevSpecific;
     UINT                        m_uiDevSpecific;
-    // Tone Control (Bass/Treble)
-    LONG                        m_BassControls[MAX_TOPOLOGY_NODES];
-    LONG                        m_TrebleControls[MAX_TOPOLOGY_NODES];
-    // Audio Effects
-    LONG                        m_ReverbControls[MAX_TOPOLOGY_NODES];      // Reverb level
-    LONG                        m_ChorusControls[MAX_TOPOLOGY_NODES];     // Chorus level
-    // Acoustic Echo Cancellation
-    BOOL                        m_AecEnabled[MAX_TOPOLOGY_NODES];         // AEC enable/disable
 
 private:
 
@@ -103,65 +95,6 @@ public:
     (   
         _In_  ULONG               ulNode,
         _In_  ULONG               ulChannel
-    );
-
-    // Tone Control (Bass/Treble)
-    LONG                        GetMixerBass
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel
-    );
-    void                        SetMixerBass
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel,
-        _In_  LONG                lBass
-    );
-    LONG                        GetMixerTreble
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel
-    );
-    void                        SetMixerTreble
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel,
-        _In_  LONG                lTreble
-    );
-
-    // Audio Effects
-    LONG                        GetMixerReverb
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel
-    );
-    void                        SetMixerReverb
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel,
-        _In_  LONG                lReverb
-    );
-    LONG                        GetMixerChorus
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel
-    );
-    void                        SetMixerChorus
-    (
-        _In_  ULONG               ulNode,
-        _In_  ULONG               ulChannel,
-        _In_  LONG                lChorus
-    );
-
-    // Acoustic Echo Cancellation
-    BOOL                        GetAecEnabled
-    (
-        _In_  ULONG               ulNode
-    );
-    void                        SetAecEnabled
-    (
-        _In_  ULONG               ulNode,
-        _In_  BOOL                fEnabled
     );
 
 protected:

@@ -14,8 +14,6 @@ Abstract:
 #ifndef _VIRTUALAUDIODRIVER_SPEAKERTOPTABLE_H_
 #define _VIRTUALAUDIODRIVER_SPEAKERTOPTABLE_H_
 
-#include "endpoints.h"
-
 //=============================================================================
 static
 KSDATARANGE SpeakerTopoPinDataRangesBridge[] =
@@ -134,153 +132,35 @@ PCPROPERTY_ITEM SpeakerPropertiesMute[] =
 DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerMute, SpeakerPropertiesMute);
 
 //=============================================================================
-// Tone Control (Bass/Treble)
-//=============================================================================
-static
-PCPROPERTY_ITEM SpeakerPropertiesBass[] =
-{
-    {
-        &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_DEV_SPECIFIC,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_SpeakerTopology
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerBass, SpeakerPropertiesBass);
-
-static
-PCPROPERTY_ITEM SpeakerPropertiesTreble[] =
-{
-    {
-        &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_DEV_SPECIFIC,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_SpeakerTopology
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerTreble, SpeakerPropertiesTreble);
-
-//=============================================================================
-// Audio Effects (Reverb/Chorus)
-//=============================================================================
-static
-PCPROPERTY_ITEM SpeakerPropertiesReverb[] =
-{
-    {
-        &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_DEV_SPECIFIC,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_SpeakerTopology
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerReverb, SpeakerPropertiesReverb);
-
-static
-PCPROPERTY_ITEM SpeakerPropertiesChorus[] =
-{
-    {
-        &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_DEV_SPECIFIC,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_SpeakerTopology
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerChorus, SpeakerPropertiesChorus);
-
-//=============================================================================
-// Acoustic Echo Cancellation
-//=============================================================================
-static
-PCPROPERTY_ITEM SpeakerPropertiesAec[] =
-{
-    {
-        &KSPROPSETID_Audio,
-        KSPROPERTY_AUDIO_DEV_SPECIFIC,
-        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_SET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_SpeakerTopology
-    }
-};
-
-DEFINE_PCAUTOMATION_TABLE_PROP(AutomationSpeakerAec, SpeakerPropertiesAec);
-
-//=============================================================================
 static
 PCNODE_DESCRIPTOR SpeakerTopologyNodes[] =
 {
-    // KSNODE_TOPO_SPEAKER_VOLUME
+    // KSNODE_TOPO_VOLUME
     {
       0,                              // Flags
       &AutomationSpeakerVolume,     // AutomationTable
       &KSNODETYPE_VOLUME,             // Type
       &KSAUDFNAME_MASTER_VOLUME         // Name
     },
-    // KSNODE_TOPO_SPEAKER_MUTE
+    // KSNODE_TOPO_MUTE
     {
       0,                              // Flags
       &AutomationSpeakerMute,       // AutomationTable
       &KSNODETYPE_MUTE,               // Type
       &KSAUDFNAME_MASTER_MUTE            // Name
-    },
-    // KSNODE_TOPO_BASS
-    {
-      0,                              // Flags
-      &AutomationSpeakerBass,       // AutomationTable
-      &KSNODETYPE_TONE,               // Type
-      &KSAUDFNAME_BASS                    // Name
-    },
-    // KSNODE_TOPO_TREBLE
-    {
-      0,                              // Flags
-      &AutomationSpeakerTreble,     // AutomationTable
-      &KSNODETYPE_TONE,               // Type
-      &KSAUDFNAME_TREBLE                  // Name
-    },
-    // KSNODE_TOPO_REVERB
-    {
-      0,                              // Flags
-      &AutomationSpeakerReverb,     // AutomationTable
-      &KSNODETYPE_REVERB,             // Type
-      NULL                            // Name
-    },
-    // KSNODE_TOPO_CHORUS
-    {
-      0,                              // Flags
-      &AutomationSpeakerChorus,     // AutomationTable
-      &KSNODETYPE_CHORUS,             // Type
-      NULL                            // Name
-    },
-    // KSNODE_TOPO_AEC
-    {
-      0,                              // Flags
-      &AutomationSpeakerAec,        // AutomationTable
-      &KSNODETYPE_ACOUSTIC_ECHO_CANCEL, // Type
-      NULL                            // Name
     }
 };
 
-C_ASSERT(KSNODE_TOPO_SPEAKER_VOLUME == 0);
-C_ASSERT(KSNODE_TOPO_SPEAKER_MUTE == 1);
-C_ASSERT(KSNODE_TOPO_BASS == 2);
-C_ASSERT(KSNODE_TOPO_TREBLE == 3);
-C_ASSERT(KSNODE_TOPO_REVERB == 4);
-C_ASSERT(KSNODE_TOPO_CHORUS == 5);
-C_ASSERT(KSNODE_TOPO_AEC == 6);
+C_ASSERT(KSNODE_TOPO_VOLUME == 0);
+C_ASSERT(KSNODE_TOPO_MUTE == 1);
 
 static
 PCCONNECTION_DESCRIPTOR SpeakerTopoMiniportConnections[] =
 {
     //  FromNode,                 FromPin,                    ToNode,                 ToPin
-    {   PCFILTER_NODE,            KSPIN_TOPO_WAVEOUT_SOURCE,    KSNODE_TOPO_SPEAKER_VOLUME,     1 },
-    {   KSNODE_TOPO_SPEAKER_VOLUME,       0,                          KSNODE_TOPO_BASS,       1 },
-    {   KSNODE_TOPO_BASS,         0,                          KSNODE_TOPO_TREBLE,     1 },
-    {   KSNODE_TOPO_TREBLE,       0,                          KSNODE_TOPO_REVERB,     1 },
-    {   KSNODE_TOPO_REVERB,       0,                          KSNODE_TOPO_CHORUS,     1 },
-    {   KSNODE_TOPO_CHORUS,       0,                          KSNODE_TOPO_SPEAKER_MUTE,       1 },
-    {   KSNODE_TOPO_SPEAKER_MUTE,         0,                          PCFILTER_NODE,          KSPIN_TOPO_LINEOUT_DEST }
+    {   PCFILTER_NODE,            KSPIN_TOPO_WAVEOUT_SOURCE,    KSNODE_TOPO_VOLUME,     1 },
+    {   KSNODE_TOPO_VOLUME,       0,                          KSNODE_TOPO_MUTE,       1 },
+    {   KSNODE_TOPO_MUTE,         0,                          PCFILTER_NODE,          KSPIN_TOPO_LINEOUT_DEST }
 };
 
 //=============================================================================
